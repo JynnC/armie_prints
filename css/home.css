@@ -531,6 +531,18 @@ img { max-width: 100%; display: block; }
   box-shadow: 0 12px 32px rgba(0,0,0,0.09);
 }
 
+.product-card a {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.product-actions {
+  position: relative;
+  z-index: 2;
+}
+
 .product-img-wrap {
   aspect-ratio: 1;
   display: flex;
@@ -538,6 +550,7 @@ img { max-width: 100%; display: block; }
   justify-content: center;
   overflow: hidden;
   position: relative;
+  cursor: pointer;
 }
 
 .product-img-wrap img {

@@ -94,10 +94,10 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
 
     <ul class="nav-links">
       <li><a href="index.php" class="active">Home</a></li>
-      <li><a href="#">Products</a></li>
+      <li><a href="products.php">Products</a></li>
       <li><a href="#">Custom Order</a></li>
       <li><a href="#">Tracking</a></li>
-      <li><a href="#">About</a></li>
+      <li><a href="about.php">About</a></li>
     </ul>
 
     <div class="nav-actions">
@@ -126,10 +126,10 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
   <!-- Mobile menu -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="index.php">Home</a>
-    <a href="#">Products</a>
+    <a href="products.php">Products</a>
     <a href="#">Custom Order</a>
     <a href="#">Tracking</a>
-    <a href="#">About</a>
+    <a href="about.php">About</a>
     <?php if ($logged_in): ?>
       <a href="index.php" class="btn-signed-in">
         Hello<?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>!
@@ -275,11 +275,11 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
           $bg = $colors[$ci++ % 4];
       ?>
       <div class="product-card" data-category="<?= htmlspecialchars($p['category']) ?>">
-        <div class="product-img-wrap" style="background:<?= $bg ?>">
+        <a href="product-view.php?id=<?= $p['id'] ?>" class="product-img-wrap" style="background:<?= $bg ?>">
           <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($p['name']) ?>"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="img-placeholder" style="display:none;">🧲</div>
-        </div>
+        </a>
         <div class="product-info">
           <h3 class="product-name"><?= htmlspecialchars($p['name']) ?></h3>
           <p class="product-desc"><?= htmlspecialchars($p['description'] ?? 'High-quality custom magnet, perfect for collectors.') ?></p>
@@ -291,27 +291,29 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
         </div>
       </div>
       <?php endwhile;
-      else: // Placeholder cards when DB is empty ?>
+      else:?>
       <?php
         $placeholders = [
-          ['BTS Ref Magnet','High-quality BTS reference magnet set','149.00','#FFE0E0','🧲'],
-          ['Demon Slayer Magnet','Demon Slayer character magnet collection','149.00','#E0E8FF','⚔️'],
-          ['Jujutsu Kaisen Magnet','JJK fan favorite magnet set','149.00','#E0FFE8','✨'],
-          ['Straw Hat Magnet','One Piece Straw Hat crew magnets','149.00','#FFF8E0','🏴‍☠️'],
+          ['BTS Ref Magnet','High-quality BTS reference magnet set','149.00','#FFE0E0',''],
+          ['Demon Slayer Magnet','Demon Slayer character magnet collection','149.00','#E0E8FF',''],
+          ['Jujutsu Kaisen Magnet','JJK fan favorite magnet set','149.00','#E0FFE8',''],
+          ['Straw Hat Magnet','One Piece Straw Hat crew magnets','149.00','#FFF8E0',''],
         ];
         foreach ($placeholders as $ph):
       ?>
-      <div class="product-card">
-        <div class="product-img-wrap" style="background:<?= $ph[3] ?>">
-          <div class="img-placeholder" style="display:flex;"><?= $ph[4] ?></div>
-        </div>
+      <div class="product-card" data-category="<?= htmlspecialchars($p['category']) ?>">
+        <a href="product-view.php?id=<?= $p['id'] ?>" class="product-img-wrap" style="background:<?= $bg ?>">
+          <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($p['name']) ?>"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="img-placeholder" style="display:none;">🧲</div>
+        </a>
         <div class="product-info">
-          <h3 class="product-name"><?= $ph[0] ?></h3>
-          <p class="product-desc"><?= $ph[1] ?></p>
-          <div class="product-price">₱ <?= $ph[2] ?></div>
+          <h3 class="product-name"><?= htmlspecialchars($p['name']) ?></h3>
+          <p class="product-desc"><?= htmlspecialchars($p['description'] ?? 'High-quality custom magnet, perfect for collectors.') ?></p>
+          <div class="product-price">₱ <?= number_format($p['price'], 2) ?></div>
           <div class="product-actions">
-            <button class="btn-cart">Add to Cart</button>
-            <button class="btn-buy">Buy Now</button>
+            <button class="btn-cart" onclick="addToCart(<?= $p['id'] ?>)">Add to Cart</button>
+            <button class="btn-buy" onclick="buyNow(<?= $p['id'] ?>)">Buy Now</button>
           </div>
         </div>
       </div>
@@ -319,7 +321,7 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
     </div>
 
     <div class="view-all-wrap">
-      <a href="#" class="btn-view-all">View All Products</a>
+      <a href="products.php" class="btn-view-all">View All Products</a>
     </div>
   </div>
 </section>
@@ -355,12 +357,12 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
 
     <div class="footer-brand">
       <div class="footer-logo">ArmiePrints</div>
-      <p>Your favorite sticker-style ukay shop bringing cute and creativity to every magnet surface. Handcrafted with love.</p>
+      <p>Your favorite sticker-style shop bringing cute and creativity to every magnet surface. Handcrafted with love.</p>
       <div class="footer-socials">
-        <a href="#" aria-label="Facebook">●</a>
-        <a href="#" aria-label="Instagram">●</a>
-        <a href="#" aria-label="TikTok">●</a>
-        <a href="#" aria-label="Twitter">●</a>
+        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
       </div>
     </div>
 
