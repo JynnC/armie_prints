@@ -60,7 +60,7 @@
   </nav>
 
   <main class="page">
-    <aside class="sidebar-card" aria-label="Steps">
+    <aside class="sidebar-card stat-card" aria-label="Steps">
       <div class="sidebar-white-pad">
         <ol class="stepper">
           <li class="step">
@@ -101,7 +101,7 @@
 
     <section class="stack" aria-label="Custom Order">
       <!-- Upload -->
-      <section class="card">
+      <section class="card stat-card">
         <div class="card-head">
           <div class="card-icon" aria-hidden="true">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -160,7 +160,7 @@
       </section>
 
       <!-- Order details -->
-      <section class="card">
+      <section class="card stat-card">
         <div class="card-head">
           <div class="card-icon" aria-hidden="true">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -211,7 +211,7 @@
       </section>
 
       <!-- Order summary -->
-      <section class="card">
+      <section class="card stat-card">
         <div class="card-head">
           <div class="card-icon" aria-hidden="true">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
