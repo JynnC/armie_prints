@@ -36,20 +36,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Cart counter (simple local state)
-  let cartCount = 0;
+
   const cartBadge = document.querySelector('.cart-count');
 
   window.addToCart = function(productId) {
-    cartCount++;
-    if (cartBadge) cartBadge.textContent = cartCount;
+    fetch('add-to-cart.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'product_id=' + productId
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'login_required') {
+        showToast('Please login first.');
+        return;
+      }
 
-    // Quick toast feedback
-    showToast('Added to cart! 🛒');
+      if (data.status === 'success') {
+        if (cartBadge) cartBadge.textContent = data.count;
+        showToast('Added to cart! 🛒');
+      }
+    })
+    .catch(() => {
+      showToast('Something went wrong.');
+    });
   };
 
   window.buyNow = function(productId) {
-    window.location.href = `login.php?redirect=checkout&id=${productId}`;
+
+    window.location.href =
+      'checkout.php?buy_now=1&product_id=' + productId + '&qty=1';
   };
 
   // ── Toast notification

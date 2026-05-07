@@ -95,21 +95,36 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
     <ul class="nav-links">
       <li><a href="index.php" class="active">Home</a></li>
       <li><a href="products.php">Products</a></li>
-      <li><a href="#">Custom Order</a></li>
-      <li><a href="#">Tracking</a></li>
+      <li><a href="customorder.php">Custom Order</a></li>
+      <li><a href="tracking.php">Tracking</a></li>
       <li><a href="about.php">About</a></li>
     </ul>
 
     <div class="nav-actions">
-      <a href="#" class="cart-btn" aria-label="Cart">
+      <a href="cart.php" class="cart-btn" aria-label="Cart">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
         </svg>
-        <span class="cart-count">0</span>
+        <?php
+          $cart_count = 0;
+          if ($logged_in) {
+              $uid = $_SESSION['user_id'];
+              $cartQuery = getDB()->prepare("
+                  SELECT SUM(quantity) as total
+                  FROM cart
+                  WHERE user_id = ?
+              ");
+              $cartQuery->bind_param("i", $uid);
+              $cartQuery->execute();
+
+              $cart_count = $cartQuery->get_result()->fetch_assoc()['total'] ?? 0;
+          }
+        ?>
+        <span class="cart-count"><?= $cart_count ?></span>
       </a>
       <?php if ($logged_in): ?>
-        <a href="index.php" class="btn-signed-in">
+        <a href="profile.php" class="btn-signed-in">
           Hello, <?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>!
         </a>
         <a href="logout.php" class="btn-logout-nav">Logout</a>
@@ -131,7 +146,7 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
     <a href="#">Tracking</a>
     <a href="about.php">About</a>
     <?php if ($logged_in): ?>
-      <a href="index.php" class="btn-signed-in">
+      <a href="profile.php" class="btn-signed-in">
         Hello<?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>!
       </a>
       <a href="logout.php" class="btn-logout-nav">Logout</a>
@@ -232,7 +247,7 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
     <p class="hero-desc">
       Your favorite sticker-style shop bringing cute and creativity to every magnet surface. Handcrafted with love.
     </p>
-    <a href="#" class="btn-shop">Shop Now →</a>
+    <a href="products.php" class="btn-shop">Shop Now →</a>
   </div>
 
   <div class="hero-visual">

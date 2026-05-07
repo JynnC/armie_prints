@@ -64,7 +64,7 @@ $counts['all'] = array_sum($counts);
 </head>
 <body>
 
-<!-- ══ NAVBAR (same as index) ══════════════════════════════════════ -->
+<!-- ══ NAVBAR ══════════════════════════════════════════════════════════ -->
 <nav class="navbar">
   <div class="nav-inner">
     <a href="index.php" class="nav-logo">
@@ -72,39 +72,149 @@ $counts['all'] = array_sum($counts);
            onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
       <span class="logo-fallback">Armie<span>Prints</span></span>
     </a>
+
     <ul class="nav-links">
-      <li><a href="index.php">Home</a></li>
+      <li><a href="index.php" >Home</a></li>
       <li><a href="products.php" class="active">Products</a></li>
-      <li><a href="#">Custom Order</a></li>
-      <li><a href="#">Tracking</a></li>
-      <li><a href="#">About</a></li>
+      <li><a href="customorder.php">Custom Order</a></li>
+      <li><a href="tracking.php">Tracking</a></li>
+      <li><a href="about.php">About</a></li>
     </ul>
+
     <div class="nav-actions">
-      <a href="#" class="cart-btn" aria-label="Cart">
+      <a href="cart.php" class="cart-btn" aria-label="Cart">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
         </svg>
-        <span class="cart-count">0</span>
+        <?php
+          $cart_count = 0;
+          if ($logged_in) {
+              $uid = $_SESSION['user_id'];
+              $cartQuery = getDB()->prepare("
+                  SELECT SUM(quantity) as total
+                  FROM cart
+                  WHERE user_id = ?
+              ");
+              $cartQuery->bind_param("i", $uid);
+              $cartQuery->execute();
+
+              $cart_count = $cartQuery->get_result()->fetch_assoc()['total'] ?? 0;
+          }
+        ?>
+        <span class="cart-count"><?= $cart_count ?></span>
       </a>
       <?php if ($logged_in): ?>
-        <a href="index.php" class="btn-signed-in">
+        <a href="profile.php" class="btn-signed-in">
           Hello, <?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>!
         </a>
         <a href="logout.php" class="btn-logout-nav">Logout</a>
       <?php else: ?>
-        <a href="index.php#" class="btn-signin">Sign in / Sign Up</a>
+        <button class="btn-signin" id="openModal">Sign in / Sign Up</button>
       <?php endif; ?>
     </div>
-    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+
+  <!-- Mobile menu -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="index.php">Home</a>
     <a href="products.php">Products</a>
     <a href="#">Custom Order</a>
     <a href="#">Tracking</a>
-    <a href="#">About</a>
+    <a href="about.php">About</a>
+    <?php if ($logged_in): ?>
+      <a href="profile.php" class="btn-signed-in">
+        Hello<?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>!
+      </a>
+      <a href="logout.php" class="btn-logout-nav">Logout</a>
+    <?php else: ?>
+      <button class="btn-signin" id="openModal">Sign in / Sign Up</button>
+    <?php endif; ?>
   </div>
+
+
+  <?php if (!$logged_in): ?>
+    <div class="modal-overlay" id="authModal">
+      <div class="modal-card">
+        <button class="modal-close" id="closeModal">✕</button>
+
+        <div class="modal-logo">
+          <img src="images/logo.png" alt="ArmiePrints"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-fallback" style="font-size:18px;">Armie<span>Prints</span></span>
+        </div>
+
+        <div class="modal-tabs">
+          <button class="modal-tab <?= ($open_modal !== 'signup') ? 'active' : '' ?>" data-tab="login">Login</button>
+          <button class="modal-tab <?= ($open_modal === 'signup') ? 'active' : '' ?>" data-tab="signup">Sign Up</button>
+        </div>
+
+        <?php if ($modal_error): ?>
+          <div class="modal-alert modal-alert--error"><?= htmlspecialchars($modal_error) ?></div>
+        <?php endif; ?>
+        <?php if ($modal_success): ?>
+          <div class="modal-alert modal-alert--success"><?= htmlspecialchars($modal_success) ?></div>
+        <?php endif; ?>
+
+        <div class="modal-pane <?= ($open_modal !== 'signup') ? 'active' : '' ?>" id="pane-login">
+          <p class="modal-welcome">Welcome Back!</p>
+          <form method="POST" action="index.php">
+            <input type="hidden" name="action" value="login">
+            <div class="mform-group">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="juan@email.com" autocomplete="email" required>
+            </div>
+            <div class="mform-group">
+              <label>Password</label>
+              <div class="minput-wrap">
+                <input type="password" name="password" id="loginPw" placeholder="Your password" required>
+                <span class="mpw-toggle" onclick="toggleMPw('loginPw',this)">👁</span>
+              </div>
+            </div>
+            <button type="submit" class="mbtn-primary">LOGIN</button>
+          </form>
+          <p class="modal-switch">No account yet? <a href="#" data-switch="signup">Sign up here</a></p>
+        </div>
+
+        <div class="modal-pane <?= ($open_modal === 'signup') ? 'active' : '' ?>" id="pane-signup">
+          <p class="modal-welcome">Welcome!</p>
+          <form method="POST" action="index.php">
+            <input type="hidden" name="action" value="signup">
+            <div class="mform-group">
+              <label>Full Name</label>
+              <input type="text" name="full_name" placeholder="Juan Dela Cruz" required>
+            </div>
+            <div class="mform-group">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="juan@email.com" required>
+            </div>
+            <div class="mform-group">
+              <label>Phone <span style="color:#888;font-weight:400;">(optional)</span></label>
+              <input type="text" name="phone" placeholder="09xxxxxxxxx">
+            </div>
+            <div class="mform-group">
+              <label>Password</label>
+              <div class="minput-wrap">
+                <input type="password" name="password" id="signupPw" placeholder="Min. 6 characters" required>
+                <span class="mpw-toggle" onclick="toggleMPw('signupPw',this)">👁</span>
+              </div>
+            </div>
+            <button type="submit" class="mbtn-primary">SIGN UP NOW</button>
+          </form>
+          <p class="modal-switch">Already have an account? <a href="#" data-switch="login">Login here</a></p>
+        </div>
+
+        <p class="modal-terms">
+          By continuing you agree to ArmiePrints
+          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        </p>
+      </div>
+    </div>
+    <?php endif; ?>
 </nav>
 
 <!-- ══ BREADCRUMB ══════════════════════════════════════════════════ -->
@@ -211,7 +321,16 @@ $counts['all'] = array_sum($counts);
           <p class="product-desc"><?= htmlspecialchars($p['description'] ?? '') ?></p>
           <div class="product-price">₱ <?= number_format($p['price'], 2) ?></div>
           <div class="product-actions">
-            <button class="btn-cart">Add to Cart</button>
+            <?php if ($p['stock'] > 0): ?>
+                <button class="btn-cart" onclick="addToCart(<?= $p['id'] ?>)">
+                    Add to Cart
+                </button>
+            <?php else: ?>
+                <button class="btn-cart" disabled>
+                    Out of Stock
+                </button>
+            <?php endif; ?>
+
             <a href="product-view.php?id=<?= $p['id'] ?>" class="btn-buy">View</a>
           </div>
         </div>

@@ -7,6 +7,20 @@ $id = (int)($_GET['id'] ?? 0);
 if (!$id) { header('Location: products.php'); exit; }
 
 $db   = getDB();
+$cart_count = 0;
+
+if ($logged_in) {
+    $uid = $_SESSION['user_id'];
+    $cartQuery = $db->prepare("
+        SELECT COALESCE(SUM(quantity), 0) AS total
+        FROM cart
+        WHERE user_id = ?
+    ");
+    $cartQuery->bind_param("i", $uid);
+    $cartQuery->execute();
+    $cart_count = $cartQuery->get_result()->fetch_assoc()['total'];
+}
+
 $stmt = $db->prepare("SELECT * FROM products WHERE id = ? AND is_active = 1");
 $stmt->bind_param('i', $id);
 $stmt->execute();
@@ -41,7 +55,7 @@ $cat_label = match($product['category']) {
 </head>
 <body>
 
-<!-- ══ NAVBAR ══════════════════════════════════════════════════════ -->
+<!-- ══ NAVBAR ══════════════════════════════════════════════════════════ -->
 <nav class="navbar">
   <div class="nav-inner">
     <a href="index.php" class="nav-logo">
@@ -49,39 +63,149 @@ $cat_label = match($product['category']) {
            onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
       <span class="logo-fallback">Armie<span>Prints</span></span>
     </a>
+
     <ul class="nav-links">
-      <li><a href="index.php">Home</a></li>
-      <li><a href="products.php" class="active">Products</a></li>
-      <li><a href="#">Custom Order</a></li>
-      <li><a href="#">Tracking</a></li>
-      <li><a href="#">About</a></li>
+      <li><a href="index.php" class="active">Home</a></li>
+      <li><a href="products.php">Products</a></li>
+      <li><a href="customorder.php">Custom Order</a></li>
+      <li><a href="tracking.php">Tracking</a></li>
+      <li><a href="about.php">About</a></li>
     </ul>
+
     <div class="nav-actions">
-      <a href="#" class="cart-btn" aria-label="Cart">
+      <a href="cart.php" class="cart-btn" aria-label="Cart">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
         </svg>
-        <span class="cart-count">0</span>
+        <?php
+          $cart_count = 0;
+          if ($logged_in) {
+              $uid = $_SESSION['user_id'];
+              $cartQuery = getDB()->prepare("
+                  SELECT SUM(quantity) as total
+                  FROM cart
+                  WHERE user_id = ?
+              ");
+              $cartQuery->bind_param("i", $uid);
+              $cartQuery->execute();
+
+              $cart_count = $cartQuery->get_result()->fetch_assoc()['total'] ?? 0;
+          }
+        ?>
+        <span class="cart-count"><?= $cart_count ?></span>
       </a>
       <?php if ($logged_in): ?>
-        <a href="index.php" class="btn-signed-in">
+        <a href="profile.php" class="btn-signed-in">
           Hello, <?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>!
         </a>
         <a href="logout.php" class="btn-logout-nav">Logout</a>
       <?php else: ?>
-        <a href="index.php" class="btn-signin">Sign in / Sign Up</a>
+        <button class="btn-signin" id="openModal">Sign in / Sign Up</button>
       <?php endif; ?>
     </div>
-    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+
+  <!-- Mobile menu -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="index.php">Home</a>
     <a href="products.php">Products</a>
     <a href="#">Custom Order</a>
     <a href="#">Tracking</a>
-    <a href="#">About</a>
+    <a href="about.php">About</a>
+    <?php if ($logged_in): ?>
+      <a href="profile.php" class="btn-signed-in">
+        Hello<?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>!
+      </a>
+      <a href="logout.php" class="btn-logout-nav">Logout</a>
+    <?php else: ?>
+      <button class="btn-signin" id="openModal">Sign in / Sign Up</button>
+    <?php endif; ?>
   </div>
+
+
+  <?php if (!$logged_in): ?>
+    <div class="modal-overlay" id="authModal">
+      <div class="modal-card">
+        <button class="modal-close" id="closeModal">✕</button>
+
+        <div class="modal-logo">
+          <img src="images/logo.png" alt="ArmiePrints"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-fallback" style="font-size:18px;">Armie<span>Prints</span></span>
+        </div>
+
+        <div class="modal-tabs">
+          <button class="modal-tab <?= ($open_modal !== 'signup') ? 'active' : '' ?>" data-tab="login">Login</button>
+          <button class="modal-tab <?= ($open_modal === 'signup') ? 'active' : '' ?>" data-tab="signup">Sign Up</button>
+        </div>
+
+        <?php if ($modal_error): ?>
+          <div class="modal-alert modal-alert--error"><?= htmlspecialchars($modal_error) ?></div>
+        <?php endif; ?>
+        <?php if ($modal_success): ?>
+          <div class="modal-alert modal-alert--success"><?= htmlspecialchars($modal_success) ?></div>
+        <?php endif; ?>
+
+        <div class="modal-pane <?= ($open_modal !== 'signup') ? 'active' : '' ?>" id="pane-login">
+          <p class="modal-welcome">Welcome Back!</p>
+          <form method="POST" action="index.php">
+            <input type="hidden" name="action" value="login">
+            <div class="mform-group">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="juan@email.com" autocomplete="email" required>
+            </div>
+            <div class="mform-group">
+              <label>Password</label>
+              <div class="minput-wrap">
+                <input type="password" name="password" id="loginPw" placeholder="Your password" required>
+                <span class="mpw-toggle" onclick="toggleMPw('loginPw',this)">👁</span>
+              </div>
+            </div>
+            <button type="submit" class="mbtn-primary">LOGIN</button>
+          </form>
+          <p class="modal-switch">No account yet? <a href="#" data-switch="signup">Sign up here</a></p>
+        </div>
+
+        <div class="modal-pane <?= ($open_modal === 'signup') ? 'active' : '' ?>" id="pane-signup">
+          <p class="modal-welcome">Welcome!</p>
+          <form method="POST" action="index.php">
+            <input type="hidden" name="action" value="signup">
+            <div class="mform-group">
+              <label>Full Name</label>
+              <input type="text" name="full_name" placeholder="Juan Dela Cruz" required>
+            </div>
+            <div class="mform-group">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="juan@email.com" required>
+            </div>
+            <div class="mform-group">
+              <label>Phone <span style="color:#888;font-weight:400;">(optional)</span></label>
+              <input type="text" name="phone" placeholder="09xxxxxxxxx">
+            </div>
+            <div class="mform-group">
+              <label>Password</label>
+              <div class="minput-wrap">
+                <input type="password" name="password" id="signupPw" placeholder="Min. 6 characters" required>
+                <span class="mpw-toggle" onclick="toggleMPw('signupPw',this)">👁</span>
+              </div>
+            </div>
+            <button type="submit" class="mbtn-primary">SIGN UP NOW</button>
+          </form>
+          <p class="modal-switch">Already have an account? <a href="#" data-switch="login">Login here</a></p>
+        </div>
+
+        <p class="modal-terms">
+          By continuing you agree to ArmiePrints
+          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        </p>
+      </div>
+    </div>
+    <?php endif; ?>
 </nav>
 
 <!-- ══ BREADCRUMB ═════════════════════════════════════════════════ -->
@@ -225,7 +349,6 @@ $cat_label = match($product['category']) {
   </div>
 </div>
 
-<!-- ══ YOU MIGHT ALSO LIKE ════════════════════════════════════════ -->
 <div class="container pv-related">
   <h2 class="section-title" style="margin-bottom:24px;">You Might Also Like</h2>
   <div class="products-grid">
@@ -248,7 +371,7 @@ $cat_label = match($product['category']) {
         <p class="product-desc"><?= htmlspecialchars($r['description'] ?? '') ?></p>
         <div class="product-price">₱ <?= number_format($r['price'], 2) ?></div>
         <div class="product-actions">
-          <button class="btn-cart">Add to Cart</button>
+          <button class="btn-cart" onclick="addToCart(<?= $r['id'] ?>)">Add to Cart</button>
           <a href="product-view.php?id=<?= $r['id'] ?>" class="btn-buy">View</a>
         </div>
       </div>
@@ -323,28 +446,43 @@ document.querySelectorAll('.pv-tab').forEach(tab => {
 
 // Cart / Buy
 window.addToCartPV = function(id) {
-  const qty = document.getElementById('qtyInput')?.value || 1;
+  const qty = parseInt(document.getElementById('qtyInput')?.value || 1);
   const badge = document.querySelector('.cart-count');
-  if (badge) badge.textContent = parseInt(badge.textContent || 0) + parseInt(qty);
-  // Toast
-  const t = document.createElement('div');
-  t.textContent = `Added to cart! 🛒`;
-  Object.assign(t.style, {
-    position:'fixed', bottom:'28px', right:'28px',
-    background:'#1a1a1a', color:'#fff',
-    padding:'12px 20px', borderRadius:'10px',
-    fontSize:'13px', fontWeight:'600',
-    fontFamily:"'Poppins',sans-serif",
-    boxShadow:'0 8px 24px rgba(0,0,0,0.2)',
-    zIndex:'9999'
+
+  fetch('add-to-cart.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: 'product_id=' + encodeURIComponent(id) + '&quantity=' + encodeURIComponent(qty)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === 'login_required') {
+      alert('Please login first.');
+      return;
+    }
+
+    if (data.status === 'success') {
+      if (badge) badge.textContent = data.count;
+      alert('Added to cart! 🛒');
+    } else {
+      alert('Cart was not saved.');
+    }
+  })
+  .catch(() => {
+    alert('Something went wrong.');
   });
-  document.body.appendChild(t);
-  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity 0.4s'; setTimeout(()=>t.remove(),400); }, 2500);
 };
 
 window.buyNowPV = function(id) {
-  window.location.href = 'index.php';
+
+  const qty = parseInt(document.getElementById('qtyInput')?.value || 1);
+
+  window.location.href =
+    'checkout.php?buy_now=1&product_id=' + id + '&qty=' + qty;
 };
+
 </script>
 </body>
 </html>
