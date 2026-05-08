@@ -1,0 +1,276 @@
+body {
+    background: #f7f7f7;
+}
+
+.profile-page {
+    min-height: 85vh;
+    padding: 45px 40px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.profile-sidebar,
+.profile-card,
+.stat-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+}
+
+.profile-sidebar {
+    padding: 28px;
+    height: fit-content;
+    text-align: center;
+}
+
+.profile-avatar {
+    width: 95px;
+    height: 95px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: #ff4f6d;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    font-weight: 800;
+}
+
+.profile-sidebar h2 {
+    font-size: 20px;
+    margin-bottom: 6px;
+}
+
+.profile-sidebar p {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 24px;
+}
+
+.profile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-menu a {
+    padding: 12px 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+}
+
+.profile-menu a.active,
+.profile-menu a:hover {
+    background: #fff0f3;
+    color: #ff4f6d;
+}
+
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.stat-card {
+    padding: 22px;
+}
+
+.stat-card span {
+    display: block;
+    color: #777;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.stat-card strong {
+    font-size: 22px;
+    color: #ff4f6d;
+}
+
+.profile-card {
+    padding: 30px;
+}
+
+.profile-card h1 {
+    font-size: 26px;
+    margin-bottom: 6px;
+}
+
+.profile-subtitle {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+.form-group input {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 13px 15px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #ff4f6d;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 6px;
+    color: #888;
+    font-size: 12px;
+}
+
+.save-btn {
+    border: none;
+    background: #ff4f6d;
+    color: #fff;
+    padding: 13px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+}
+
+.alert {
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.alert.success {
+    background: #e8fff8;
+    color: #00a889;
+}
+
+.alert.error {
+    background: #ffecec;
+    color: #d93030;
+}
+
+@media (max-width: 900px) {
+    .profile-page {
+        grid-template-columns: 1fr;
+        padding: 25px 16px;
+    }
+
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+.order-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.history-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    background: #fff;
+}
+
+.history-card h3 {
+    margin-bottom: 6px;
+    font-size: 17px;
+}
+
+.history-card p {
+    color: #777;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.history-status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #e8fff8;
+    color: #00a889;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.history-right {
+    text-align: right;
+}
+
+.history-right strong {
+    display: block;
+    color: #ff4f6d;
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.track-btn {
+    display: inline-block;
+    background: #ff4f6d;
+    color: #fff;
+    padding: 9px 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.empty-history {
+    text-align: center;
+    padding: 45px 20px;
+}
+
+.empty-history p {
+    color: #777;
+    margin: 8px 0 18px;
+}
+
+.empty-history a {
+    display: inline-block;
+    background: #ff4f6d;
+    color: #fff;
+    padding: 11px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+@media (max-width: 700px) {
+    .history-card {
+        flex-direction: column;
+    }
+
+    .history-right {
+        text-align: left;
+    }
+}
