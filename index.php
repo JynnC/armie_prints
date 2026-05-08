@@ -19,9 +19,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'login
         $user = $stmt->get_result()->fetch_assoc();
         $stmt->close();
         if ($user && password_verify($password, $user['password'])) {
+
             $_SESSION['user_id']   = $user['id'];
             $_SESSION['user_name'] = $user['full_name'];
             $_SESSION['user_role'] = $user['role'];
+
+            // ADMIN LOGIN
+            if ($user['role'] === 'admin') {
+
+                header('Location: admin.php');
+                exit;
+
+            }
+
+            // CUSTOMER LOGIN
             header('Location: index.php');
             exit;
         } else {
@@ -316,21 +327,38 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
         ];
         foreach ($placeholders as $ph):
       ?>
-      <div class="product-card" data-category="<?= htmlspecialchars($p['category']) ?>">
-        <a href="product-view.php?id=<?= $p['id'] ?>" class="product-img-wrap" style="background:<?= $bg ?>">
-          <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($p['name']) ?>"
-              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="img-placeholder" style="display:none;">🧲</div>
+      <div class="product-card" data-category="atm_magnet">
+
+        <a href="products.php" class="product-img-wrap" style="background:<?= $ph[3] ?>">
+          <div class="img-placeholder">🧲</div>
         </a>
+
         <div class="product-info">
-          <h3 class="product-name"><?= htmlspecialchars($p['name']) ?></h3>
-          <p class="product-desc"><?= htmlspecialchars($p['description'] ?? 'High-quality custom magnet, perfect for collectors.') ?></p>
-          <div class="product-price">₱ <?= number_format($p['price'], 2) ?></div>
-          <div class="product-actions">
-            <button class="btn-cart" onclick="addToCart(<?= $p['id'] ?>)">Add to Cart</button>
-            <button class="btn-buy" onclick="buyNow(<?= $p['id'] ?>)">Buy Now</button>
+
+          <h3 class="product-name">
+            <?= htmlspecialchars($ph[0]) ?>
+          </h3>
+
+          <p class="product-desc">
+            <?= htmlspecialchars($ph[1]) ?>
+          </p>
+
+          <div class="product-price">
+            ₱ <?= number_format($ph[2], 2) ?>
           </div>
+
+          <div class="product-actions">
+            <a href="products.php" class="btn-cart">
+              View Product
+            </a>
+
+            <a href="products.php" class="btn-buy">
+              Shop Now
+            </a>
+          </div>
+
         </div>
+
       </div>
       <?php endforeach; endif; ?>
     </div>
