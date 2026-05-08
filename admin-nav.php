@@ -442,8 +442,7 @@ $admin_name  = htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]);
       <li><a href="admin.php"              class="<?= $active_page === 'dashboard'      ? 'active' : '' ?>">Dashboard</a></li>
       <li><a href="admin-products.php"     class="<?= $active_page === 'products'       ? 'active' : '' ?>">Products</a></li>
       <li><a href="admin-orders.php"       class="<?= $active_page === 'orders'         ? 'active' : '' ?>">Orders</a></li>
-      <li><a href="admin-users.php"        class="<?= $active_page === 'users'          ? 'active' : '' ?>">Users</a></li>
-      <li><a href="admin-custom-orders.php" class="<?= $active_page === 'custom_orders' ? 'active' : '' ?>">Custom Orders</a></li>
+      <li><a href="admin-records.php"        class="<?= $active_page === 'records'          ? 'active' : '' ?>">Records</a></li>
     </ul>
     <div class="admin-nav-right">
       <div class="admin-avatar"><?= strtoupper(substr($_SESSION['user_name'], 0, 1)) ?></div>
