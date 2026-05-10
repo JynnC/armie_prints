@@ -2,9 +2,6 @@
 require_once 'includes/db.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 $logged_in = isLoggedIn();
-$modal_error = '';
-$modal_success = '';
-$open_modal = '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -211,16 +208,21 @@ $open_modal = '';
       <i class="fa-solid fa-bullseye mv-icon"></i>
       <h2>Our Mission</h2>
       <p>
-        To transform precious memories and inspirations into high-quality, affordable keepsakes. As a family-run business, we are committed to providing exceptional personalized magnets and creative souvenirs—from cherished family photos to faith-based and anime-inspired designs—ensuring that every craft we produce brings joy and value to our customers across the Philippines.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
       </p>
-      
+      <p>
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
+      </p>
     </div>
 
     <div class="mv-card mv-card--vision">
       <i class="fa-solid fa-eye mv-icon"></i>
       <h2>Our Vision</h2>
       <p>
-        To become the leading provider of personalized keepsakes in the Philippines, known for our creativity, quality, and commitment to customer satisfaction.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.
+      </p>
+      <p>
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa.
       </p>
     </div>
 
@@ -241,9 +243,13 @@ $open_modal = '';
       <p class="about-eyebrow">How It Started</p>
       <h2 class="story-title">From a small hobby to a growing brand</h2>
       <p>
-        ArmiePrints Printing Services is a family-owned business founded in September 2023 by a husband-and-wife team with the help of their children. Starting with one printer and a small Shopee shop, the business focused on creating affordable and high-quality personalized products. After discovering strong customer demand for ref magnets, ArmiePrints specialized in personalized photo magnets, anime collectible magnets, and Bible Verse souvenir magnets for special occasions.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor.
+      </p>
       <p>
-        Through dedication, creativity, and commitment to customer satisfaction, ArmiePrints expanded to Lazada and TikTok in 2024. The business is proudly DTI, BIR, and Trustmark Registered, reflecting its professionalism and reliability. Today, ArmiePrints continues to grow as a trusted family business that creates meaningful products made with care and passion.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+      <p>
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
       </p>
     </div>
   </div>
@@ -260,22 +266,22 @@ $open_modal = '';
       <div class="value-card">
         <i class="fa-solid fa-star value-icon"></i>
         <h3>Quality First</h3>
-        <p>We focus on delivering exceptional products and experiences with attention to every detail. Excellence and reliability guide everything we do.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore.</p>
       </div>
       <div class="value-card">
         <i class="fa-solid fa-heart value-icon"></i>
         <h3>Made with Love</h3>
-        <p>Every project is crafted with passion, creativity, and care. We believe thoughtful design creates meaningful connections.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore.</p>
       </div>
       <div class="value-card">
         <i class="fa-solid fa-hands-holding-circle value-icon"></i>
         <h3>Community</h3>
-        <p>We grow stronger together by supporting and empowering the people around us. Collaboration and inclusivity are at the heart of our mission.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore.</p>
       </div>
       <div class="value-card">
         <i class="fa-solid fa-leaf value-icon"></i>
         <h3>Sustainability</h3>
-        <p>We are committed to responsible practices that protect our planet and create a better future for generations to come.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore.</p>
       </div>
     </div>
   </div>
@@ -295,9 +301,9 @@ $open_modal = '';
                     onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
                 <i class="fa-solid fa-user" style="display:none;font-size:32px;color:var(--teal);"></i>
             </div>
-        <h3 class="team-name">Allan Ramirez Empalmado</h3>
+        <h3 class="team-name">Lorem Ipsum</h3>
         <p class="team-role">Founder & Designer</p>
-        <p class="team-bio">Responsible for the creative direction and product designs that bring memorable and personalized magnets to customers. Passionate about quality craftsmanship and unique souvenir concepts.</p>
+        <p class="team-bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
       </div>
       <div class="team-card">
         <div class="team-avatar">
@@ -305,9 +311,19 @@ $open_modal = '';
                 onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
             <i class="fa-solid fa-user" style="display:none;font-size:32px;color:var(--teal);"></i>
         </div>
-        <h3 class="team-name">Laarmi Caballes Empalmado</h3>
+        <h3 class="team-name">Lorem Ipsum</h3>
         <p class="team-role">Production Lead</p>
-        <p class="team-bio">overseeing production operations and ensuring every product is made with care and consistency. Dedicated to delivering high-quality customized magnets and excellent customer satisfaction.</p>
+        <p class="team-bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">
+            <img src="images/team/member1.jpg" alt="Team Member"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+            <i class="fa-solid fa-user" style="display:none;font-size:32px;color:var(--teal);"></i>
+        </div>
+        <h3 class="team-name">Lorem Ipsum</h3>
+        <p class="team-role">Customer Relations</p>
+        <p class="team-bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
       </div>
     </div>
   </div>
