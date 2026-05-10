@@ -50,7 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(res => res.json())
     .then(data => {
       if (data.status === 'login_required') {
-        showToast('Please login first.');
+        if (!promptAuthModal()) {
+          showToast('Please login first.');
+        }
         return;
       }
 
@@ -65,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   window.buyNow = function(productId) {
+    if (promptAuthModal()) return;
 
     window.location.href =
       'checkout.php?buy_now=1&product_id=' + productId + '&qty=1';
@@ -137,6 +140,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = '';
   }
 
+  function promptAuthModal() {
+    if (!modal) return false;
+    openModal('login');
+    showToast('Please sign in first.');
+    return true;
+  }
+
   openBtn?.addEventListener('click', () => openModal('login'));
   closeBtn?.addEventListener('click', closeModal);
   modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
@@ -154,6 +164,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Auto-open if PHP returned an error
   if (document.querySelector('.modal-alert')) openModal();
+
+  window.promptAuthModal = promptAuthModal;
+
+  // Require auth for selected navigation links (guest only).
+  document.addEventListener('click', (e) => {
+    const protectedNavLink = e.target.closest('a[href="customorder.php"], a[href="tracking.php"]');
+    if (!protectedNavLink) return;
+    if (!promptAuthModal()) return;
+    e.preventDefault();
+  });
 
   window.toggleMPw = function(inputId, icon) {
     const input = document.getElementById(inputId);

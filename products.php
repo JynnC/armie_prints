@@ -2,6 +2,9 @@
 require_once 'includes/db.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 $logged_in = isLoggedIn();
+$modal_error   = '';
+$modal_success = '';
+$open_modal    = '';
 
 // Filters
 $category = $_GET['category'] ?? 'all';
