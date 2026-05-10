@@ -19,6 +19,8 @@ $ship_tab = $_GET['ship_tab'] ?? 'all';
 $order_status_filter = $_GET['order_status'] ?? 'all';
 $shipping_priority = $_GET['shipping_priority'] ?? 'all';
 $order_id_input = trim($_GET['order_id'] ?? '');
+$date_from = $_GET['date_from'] ?? '';
+$date_to = $_GET['date_to'] ?? '';
 $page = max(1, (int)($_GET['page'] ?? 1));
 $per_page = 10;
 $flash = $_GET['flash'] ?? '';
@@ -39,52 +41,95 @@ if (!in_array($shipping_priority, $valid_priority, true)) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'arrange_shipment') {
     $order_id_to_update = (int)($_POST['order_id'] ?? 0);
+    $courier = trim($_POST['courier'] ?? '');
+    $shipping_type = trim($_POST['shipping_type'] ?? '');
+    $tracking_number = trim($_POST['tracking_number'] ?? '');
 
-    $redirect_params = [
-        'ship_tab' => $ship_tab,
-        'order_status' => $order_status_filter,
-        'shipping_priority' => $shipping_priority,
-        'order_id' => $order_id_input,
-        'page' => $page,
-    ];
-
-    if ($order_id_to_update <= 0) {
-        $redirect_params['flash'] = 'invalid_order';
-        header('Location: admin-orders.php?' . http_build_query($redirect_params));
-        exit;
-    }
-
-    $check_stmt = $db->prepare("SELECT status FROM orders WHERE id = ? LIMIT 1");
-    $check_stmt->bind_param('i', $order_id_to_update);
-    $check_stmt->execute();
-    $existing = $check_stmt->get_result()->fetch_assoc();
-    $check_stmt->close();
-
-    if (!$existing) {
-        $redirect_params['flash'] = 'not_found';
-        header('Location: admin-orders.php?' . http_build_query($redirect_params));
-        exit;
-    }
-
-    $current_status = strtolower((string)$existing['status']);
-    if ($current_status !== 'pending') {
-        $redirect_params['flash'] = 'already_arranged';
-        header('Location: admin-orders.php?' . http_build_query($redirect_params));
+    if ($order_id_to_update <= 0 || $courier === '' || $shipping_type === '') {
+        header('Location: admin-orders.php?flash=invalid_order');
         exit;
     }
 
     $update_stmt = $db->prepare("
         UPDATE orders
-        SET status = 'processing', updated_at = NOW()
+        SET 
+            status = 'processing',
+            courier = ?,
+            shipping_type = ?,
+            tracking_number = ?,
+            updated_at = NOW()
         WHERE id = ? AND status = 'pending'
     ");
-    $update_stmt->bind_param('i', $order_id_to_update);
-    $update_stmt->execute();
-    $updated = $update_stmt->affected_rows > 0;
-    $update_stmt->close();
 
-    $redirect_params['flash'] = $updated ? 'shipment_arranged' : 'not_updated';
-    header('Location: admin-orders.php?' . http_build_query($redirect_params));
+    $update_stmt->bind_param(
+        'sssi',
+        $courier,
+        $shipping_type,
+        $tracking_number,
+        $order_id_to_update
+    );
+
+    $update_stmt->execute();
+
+    header('Location: admin-orders.php?flash=shipment_arranged');
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($_POST['action'] ?? '', ['mark_shipped', 'mark_delivered', 'mark_completed'], true)) {
+    $order_id_to_update = (int)($_POST['order_id'] ?? 0);
+    $action = $_POST['action'];
+
+    $new_status = match ($action) {
+        'mark_shipped' => 'shipped',
+        'mark_delivered' => 'delivered',
+        'mark_completed' => 'completed',
+        default => 'processing'
+    };
+
+    if ($order_id_to_update > 0) {
+        $update_stmt = $db->prepare("
+            UPDATE orders
+            SET status = ?, updated_at = NOW()
+            WHERE id = ?
+        ");
+        $update_stmt->bind_param('si', $new_status, $order_id_to_update);
+        $update_stmt->execute();
+    }
+
+    header('Location: admin-orders.php?flash=status_updated');
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'bulk_update_status') {
+    $selected_orders = $_POST['selected_orders'] ?? [];
+    $bulk_status = $_POST['bulk_status'] ?? '';
+
+    $allowed_statuses = ['processing', 'shipped', 'delivered', 'completed', 'cancelled'];
+
+    if (!empty($selected_orders) && in_array($bulk_status, $allowed_statuses, true)) {
+        $ids = array_map('intval', $selected_orders);
+        $ids = array_filter($ids, fn($id) => $id > 0);
+
+        if (!empty($ids)) {
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $types_bulk = str_repeat('i', count($ids));
+
+            $stmt = $db->prepare("
+                UPDATE orders
+                SET status = ?, updated_at = NOW()
+                WHERE id IN ($placeholders)
+            ");
+
+            $bind_types = 's' . $types_bulk;
+            $bind_values = array_merge([$bulk_status], $ids);
+
+            $stmt->bind_param($bind_types, ...$bind_values);
+            $stmt->execute();
+            $stmt->close();
+        }
+    }
+
+    header('Location: admin-orders.php?flash=bulk_updated');
     exit;
 }
 
@@ -131,6 +176,18 @@ if ($order_status_filter === 'to_process') {
     $where[] = "o.status IN ('pending','processing')";
 } elseif ($order_status_filter === 'processed') {
     $where[] = "o.status IN ('shipped','delivered','completed')";
+}
+
+if ($date_from !== '') {
+    $where[] = "DATE(o.created_at) >= ?";
+    $params[] = $date_from;
+    $types .= 's';
+}
+
+if ($date_to !== '') {
+    $where[] = "DATE(o.created_at) <= ?";
+    $params[] = $date_to;
+    $types .= 's';
 }
 
 if ($shipping_priority === 'overdue') {
@@ -253,7 +310,10 @@ include 'admin-nav.php';
       <div class="ship-alert error">Unable to arrange shipment: order was not found.</div>
     <?php elseif ($flash === 'not_updated'): ?>
       <div class="ship-alert error">No changes were made. Please refresh and try again.</div>
+    <?php elseif ($flash === 'bulk_updated'): ?>
+      <div class="ship-alert success">Selected orders were updated successfully.</div>
     <?php endif; ?>
+    
 
     <nav class="ship-tabs">
       <a class="<?= $ship_tab === 'all' ? 'active' : '' ?>" href="<?= htmlspecialchars(order_query(['ship_tab' => 'all', 'page' => 1])) ?>">
@@ -308,11 +368,41 @@ include 'admin-nav.php';
         </select>
         <input type="text" name="order_id" value="<?= htmlspecialchars($order_id_input) ?>" placeholder="Input Order ID">
         <div class="spacer"></div>
+
+        <input type="date" name="date_from" value="<?= htmlspecialchars($date_from) ?>">
+        <input type="date" name="date_to" value="<?= htmlspecialchars($date_to) ?>">
+
         <button class="btn-apply" type="submit">Apply</button>
         <a class="btn-reset" href="admin-orders.php">Reset</a>
       </form>
     </section>
 
+    <form method="POST" id="bulkUpdateForm" style="margin:0;">
+
+      <input type="hidden" name="action" value="bulk_update_status">
+
+      <div class="bulk-actions">
+
+        <label>
+          <input type="checkbox" id="selectAllOrders">
+          Select All
+        </label>
+
+        <select name="bulk_status" required>
+          <option value="">Bulk Update Status</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+
+        <button type="submit" class="btn-apply">
+          Update Selected
+        </button>
+
+      </div>
+    </form>  
     <div class="parcel-count"><?= count($orders) ?> Parcels</div>
 
     <div class="order-head-row">
@@ -350,7 +440,15 @@ include 'admin-nav.php';
           $age_hours = $created_ts ? floor((time() - $created_ts) / 3600) : 0;
         ?>
         <article class="parcel-card">
-          <header class="parcel-top">
+          <header class="parcel-top"> 
+            <label class="order-check">
+              <input
+                type="checkbox"
+                name="selected_orders[]"
+                value="<?= (int)$order['id'] ?>"
+                form="bulkUpdateForm"
+              >
+            </label>
             <div class="buyer">
               <span class="avatar"><?= htmlspecialchars($buyer_initial) ?></span>
               <div class="buyer-name"><?= htmlspecialchars($buyer_name !== '' ? $buyer_name : 'Unknown Buyer') ?></div>
@@ -393,8 +491,11 @@ include 'admin-nav.php';
             </div>
 
             <div class="countdown-col">
-              <strong>Age: <?= $age_hours ?> hours</strong>
-              <span>Created <?= htmlspecialchars(date('m/d/Y H:i', $created_ts ?: time())) ?></span>
+              <strong><?= htmlspecialchars($order['courier'] ?? 'Not arranged') ?></strong>
+              <span><?= htmlspecialchars($order['shipping_type'] ?? 'Shipping type not set') ?></span>
+              <?php if (!empty($order['tracking_number'])): ?>
+                <span>Tracking #: <?= htmlspecialchars($order['tracking_number']) ?></span>
+              <?php endif; ?>
             </div>
 
             <div class="shipping-col">
@@ -403,14 +504,42 @@ include 'admin-nav.php';
             </div>
 
             <div class="actions-col">
-              <?php if (strtolower((string)$order['status']) === 'pending'): ?>
-                <form method="POST" class="arrange-form">
-                  <input type="hidden" name="action" value="arrange_shipment">
+              <?php $current_status = strtolower((string)$order['status']); ?>
+
+              <?php if ($current_status === 'pending'): ?>
+
+                <button type="button" class="arrange-btn" onclick="openShipmentModal(<?= (int)$order['id'] ?>)">
+                  Arrange Shipment
+                </button>
+
+              <?php elseif ($current_status === 'processing'): ?>
+
+                <form method="POST">
+                  <input type="hidden" name="action" value="mark_shipped">
                   <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
-                  <button type="submit" class="arrange-btn">Arrange Shipment</button>
+                  <button type="submit" class="arrange-btn">Mark as Shipped</button>
                 </form>
+
+              <?php elseif ($current_status === 'shipped'): ?>
+
+                <form method="POST">
+                  <input type="hidden" name="action" value="mark_delivered">
+                  <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
+                  <button type="submit" class="arrange-btn">Mark as Delivered</button>
+                </form>
+
+              <?php elseif ($current_status === 'delivered'): ?>
+
+                <form method="POST">
+                  <input type="hidden" name="action" value="mark_completed">
+                  <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
+                  <button type="submit" class="arrange-btn">Complete Order</button>
+                </form>
+
               <?php else: ?>
-                <span class="arranged-label">Arranged</span>
+
+                <span class="arranged-label">No Action</span>
+
               <?php endif; ?>
             </div>
           </div>
@@ -432,8 +561,90 @@ include 'admin-nav.php';
         <a href="<?= htmlspecialchars(order_query(['page' => min($total_pages, $page + 1)])) ?>">&gt;</a>
       </footer>
     <?php endif; ?>
+    </form>
   </section>
 </main>
+
+<div class="shipment-modal" id="shipmentModal">
+  <div class="shipment-box">
+
+    <button class="close-modal" type="button" onclick="closeShipmentModal()">
+      ×
+    </button>
+
+    <h2>Arrange Shipment</h2>
+
+    <form method="POST">
+      <input type="hidden" name="action" value="arrange_shipment">
+      <input type="hidden" name="order_id" id="shipmentOrderId">
+
+      <div class="ship-field">
+        <label>Courier</label>
+        <select name="courier" required>
+          <option value="">Select Courier</option>
+          <option value="J&T Express">J&T Express</option>
+          <option value="Flash Express">Flash Express</option>
+          <option value="LBC">LBC</option>
+          <option value="Ninja Van">Ninja Van</option>
+        </select>
+      </div>
+
+      <div class="ship-field">
+        <label>Shipping Type</label>
+        <select name="shipping_type" required>
+          <option value="">Select Shipping Type</option>
+          <option value="Standard">Standard</option>
+          <option value="Express">Express</option>
+          <option value="Same Day">Same Day</option>
+        </select>
+      </div>
+
+      <div class="ship-field">
+        <label>Tracking Number</label>
+        <input type="text" name="tracking_number" placeholder="Optional">
+      </div>
+
+      <button type="submit" class="confirm-ship-btn">
+        Confirm Shipment
+      </button>
+    </form>
+
+  </div>
+</div>
+
+<script>
+function openShipmentModal(orderId) {
+  document.getElementById('shipmentOrderId').value = orderId;
+  document.getElementById('shipmentModal').classList.add('show');
+}
+
+function closeShipmentModal() {
+  document.getElementById('shipmentModal').classList.remove('show');
+}
+</script>
+
+<script>
+const selectAllOrders =
+    document.getElementById('selectAllOrders');
+
+if (selectAllOrders) {
+
+    selectAllOrders.addEventListener(
+        'change',
+        function () {
+
+            document
+                .querySelectorAll(
+                    'input[name="selected_orders[]"]'
+                )
+                .forEach(cb => {
+
+                    cb.checked = this.checked;
+                });
+        }
+    );
+}
+</script>
 
 </body>
 </html>
