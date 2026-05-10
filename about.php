@@ -2,6 +2,9 @@
 require_once 'includes/db.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 $logged_in = isLoggedIn();
+$open_modal = $open_modal ?? 'login';
+$modal_error = $modal_error ?? '';
+$modal_success = $modal_success ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,8 +78,8 @@ $logged_in = isLoggedIn();
   <div class="mobile-menu" id="mobileMenu">
     <a href="index.php">Home</a>
     <a href="products.php">Products</a>
-    <a href="#">Custom Order</a>
-    <a href="#">Tracking</a>
+    <a href="customorder.php">Custom Order</a>
+    <a href="tracking.php">Tracking</a>
     <a href="about.php">About</a>
     <?php if ($logged_in): ?>
       <a href="profile.php" class="btn-signed-in">
@@ -208,10 +211,7 @@ $logged_in = isLoggedIn();
       <i class="fa-solid fa-bullseye mv-icon"></i>
       <h2>Our Mission</h2>
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-      </p>
-      <p>
-        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
+        To transform precious memories and inspirations into high-quality, affordable keepsakes. As a family-run business, we are committed to providing exceptional personalized magnets and creative souvenirs—from cherished family photos to faith-based and anime-inspired designs—ensuring that every craft we produce brings joy and value to our customers across the Philippines.
       </p>
     </div>
 
@@ -219,11 +219,9 @@ $logged_in = isLoggedIn();
       <i class="fa-solid fa-eye mv-icon"></i>
       <h2>Our Vision</h2>
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.
+        To be the Philippines’ leading online destination for personalized magnet crafts, recognized for our family-centered service, creative excellence, and unwavering commitment to quality. We envision ArmiePrints as the go-to shop on Shopee, Lazada, and TikTok for anyone looking to preserve memories or share meaningful gifts.
       </p>
-      <p>
-        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa.
-      </p>
+
     </div>
 
   </div>
@@ -243,14 +241,12 @@ $logged_in = isLoggedIn();
       <p class="about-eyebrow">How It Started</p>
       <h2 class="story-title">From a small hobby to a growing brand</h2>
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor.
+        ArmiePrints Printing Services is a family-owned business founded in September 2023 by a husband-and-wife team with the help of their children. Starting with one printer and a small Shopee shop, the business focused on creating affordable and high-quality personalized products. After discovering strong customer demand for ref magnets, ArmiePrints specialized in personalized photo magnets, anime collectible magnets, and Bible Verse souvenir magnets for special occasions.
       </p>
       <p>
-        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        Through dedication, creativity, and commitment to customer satisfaction, ArmiePrints expanded to Lazada and TikTok in 2024. The business is proudly DTI, BIR, and Trustmark Registered, reflecting its professionalism and reliability. Today, ArmiePrints continues to grow as a trusted family business that creates meaningful products made with care and passion.
       </p>
-      <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-      </p>
+
     </div>
   </div>
 </section>
@@ -266,22 +262,22 @@ $logged_in = isLoggedIn();
       <div class="value-card">
         <i class="fa-solid fa-star value-icon"></i>
         <h3>Quality First</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore.</p>
+        <p>We focus on delivering exceptional products and experiences with attention to every detail. Excellence and reliability guide everything we do.</p>
       </div>
       <div class="value-card">
         <i class="fa-solid fa-heart value-icon"></i>
         <h3>Made with Love</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore.</p>
+        <p>Every project is crafted with passion, creativity, and care. We believe thoughtful design creates meaningful connections.</p>
       </div>
       <div class="value-card">
         <i class="fa-solid fa-hands-holding-circle value-icon"></i>
         <h3>Community</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore.</p>
+        <p>We grow stronger together by supporting and empowering the people around us. Collaboration and inclusivity are at the heart of our mission.</p>
       </div>
       <div class="value-card">
         <i class="fa-solid fa-leaf value-icon"></i>
         <h3>Sustainability</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore.</p>
+        <p>We are committed to sustainable practices in our operations, ensuring that we minimize our environmental impact while delivering high-quality products.</p>
       </div>
     </div>
   </div>
@@ -301,9 +297,9 @@ $logged_in = isLoggedIn();
                     onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
                 <i class="fa-solid fa-user" style="display:none;font-size:32px;color:var(--teal);"></i>
             </div>
-        <h3 class="team-name">Lorem Ipsum</h3>
+        <h3 class="team-name">Allan Ramirez Empalmado</h3>
         <p class="team-role">Founder & Designer</p>
-        <p class="team-bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
+        <p class="team-bio">Leads the creative vision of Ref Magnets by designing unique and customized ATM-sized magnets that match customers’ preferences and ideas.</p>
       </div>
       <div class="team-card">
         <div class="team-avatar">
@@ -311,19 +307,9 @@ $logged_in = isLoggedIn();
                 onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
             <i class="fa-solid fa-user" style="display:none;font-size:32px;color:var(--teal);"></i>
         </div>
-        <h3 class="team-name">Lorem Ipsum</h3>
+        <h3 class="team-name">Laarmi Caballes Empalmado</h3>
         <p class="team-role">Production Lead</p>
-        <p class="team-bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
-      </div>
-      <div class="team-card">
-        <div class="team-avatar">
-            <img src="images/team/member1.jpg" alt="Team Member"
-                onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-            <i class="fa-solid fa-user" style="display:none;font-size:32px;color:var(--teal);"></i>
-        </div>
-        <h3 class="team-name">Lorem Ipsum</h3>
-        <p class="team-role">Customer Relations</p>
-        <p class="team-bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
+        <p class="team-bio">Oversees the production process to ensure every magnet is made with quality, consistency, and attention to detail.</p>
       </div>
     </div>
   </div>

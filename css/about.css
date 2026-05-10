@@ -263,9 +263,10 @@
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 300px));
   gap: 24px;
   margin-top: 8px;
+  justify-content: center;
 }
 
 .team-card {
