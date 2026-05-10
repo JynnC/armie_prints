@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 08, 2026 at 01:34 PM
+-- Generation Time: May 10, 2026 at 10:43 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,17 +34,6 @@ CREATE TABLE `cart` (
   `quantity` int(11) DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `cart`
---
-
-INSERT INTO `cart` (`id`, `user_id`, `product_id`, `quantity`, `created_at`) VALUES
-(15, 4, 1, 1, '2026-05-07 15:22:17'),
-(16, 4, 2, 1, '2026-05-07 15:22:18'),
-(17, 4, 3, 1, '2026-05-07 15:22:19'),
-(18, 4, 2, 1, '2026-05-08 10:22:38'),
-(19, 4, 1, 1, '2026-05-08 10:22:42');
 
 -- --------------------------------------------------------
 
@@ -78,17 +67,21 @@ CREATE TABLE `orders` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `payment_method` varchar(100) DEFAULT 'Cash on Delivery',
   `payment_status` varchar(50) DEFAULT 'pending',
-  `released_at` datetime DEFAULT NULL
+  `released_at` datetime DEFAULT NULL,
+  `courier` varchar(100) DEFAULT NULL,
+  `shipping_type` varchar(50) DEFAULT NULL,
+  `tracking_number` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `status`, `shipping_address`, `created_at`, `updated_at`, `payment_method`, `payment_status`, `released_at`) VALUES
-(1, 4, 1192.00, 'pending', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-07 14:39:36', '2026-05-07 14:39:36', 'Cash on Delivery', 'pending', NULL),
-(2, 4, 1341.00, 'pending', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-07 15:19:37', '2026-05-07 15:19:37', 'Cash on Delivery', 'pending', NULL),
-(3, 4, 149.00, 'pending', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-07 15:22:36', '2026-05-07 15:22:36', 'Cash on Delivery', 'pending', NULL);
+INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `status`, `shipping_address`, `created_at`, `updated_at`, `payment_method`, `payment_status`, `released_at`, `courier`, `shipping_type`, `tracking_number`) VALUES
+(1, 4, 1192.00, 'shipped', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-07 14:39:36', '2026-05-10 08:36:35', 'Cash on Delivery', 'pending', NULL, NULL, NULL, NULL),
+(2, 4, 1341.00, 'shipped', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-07 15:19:37', '2026-05-10 08:36:35', 'Cash on Delivery', 'pending', NULL, NULL, NULL, NULL),
+(3, 4, 149.00, 'shipped', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-07 15:22:36', '2026-05-10 08:36:35', 'Cash on Delivery', 'released', '2026-05-07 23:22:36', NULL, NULL, NULL),
+(4, 4, 298.00, 'shipped', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-10 07:59:03', '2026-05-10 08:36:35', 'Cash on Delivery', 'pending', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -119,7 +112,9 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `unit_pri
 (8, 2, 1, 1, 149.00),
 (9, 2, 2, 1, 149.00),
 (10, 2, 2, 1, 149.00),
-(11, 3, 2, 1, 149.00);
+(11, 3, 2, 1, 149.00),
+(12, 4, 1, 1, 149.00),
+(13, 4, 2, 1, 149.00);
 
 -- --------------------------------------------------------
 
@@ -144,10 +139,13 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `description`, `price`, `category`, `stock`, `image`, `is_active`, `created_at`) VALUES
-(1, 'BTS Ref Magnet', 'High-quality BTS reference magnet set', 149.00, 'atm_magnet', 50, 'bts.jpg', 1, '2026-04-11 08:18:01'),
-(2, 'Demon Slayer Magnet', 'Demon Slayer character magnet collection', 149.00, 'atm_magnet', 30, 'demon_slayer.jpg', 1, '2026-04-11 08:18:01'),
+(1, 'BTS Ref Magnet', 'High-quality BTS reference magnet set', 149.00, 'atm_magnet', 5, 'bts.jpg', 1, '2026-04-11 08:18:01'),
+(2, 'Demon Slayer Magnet', 'Demon Slayer character magnet collection', 149.00, 'custom_magnet', 1, 'demon_slayer.jpg', 1, '2026-04-11 08:18:01'),
 (3, 'Jujutsu Kaisen Magnet', 'JJK fan favorite magnet set', 149.00, 'atm_magnet', 25, 'jjk.jpg', 1, '2026-04-11 08:18:01'),
-(4, 'Straw Hat Magnet', 'One Piece Straw Hat crew magnets', 149.00, 'atm_magnet', 40, 'strawhats.jpg', 1, '2026-04-11 08:18:01');
+(4, 'Straw Hat Magnet', 'One Piece Straw Hat crew magnets', 149.00, 'atm_magnet', 40, 'strawhats.jpg', 1, '2026-04-11 08:18:01'),
+(5, 'TRIAL magnet', '', 79.00, 'atm_magnet', 50, 'prod_6a002234991de.webp', 0, '2026-05-10 06:14:12'),
+(6, 'TRIAL magnet', 'Trial Product', 79.00, 'atm_magnet', 50, 'prod_6a002240f3e83.webp', 0, '2026-05-10 06:14:25'),
+(7, 'TRIAL magnet', 'Trial Product', 79.00, 'atm_magnet', 50, 'prod_6a00224728859.webp', 1, '2026-05-10 06:14:31');
 
 -- --------------------------------------------------------
 
@@ -229,7 +227,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `custom_orders`
@@ -241,19 +239,19 @@ ALTER TABLE `custom_orders`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
