@@ -10,6 +10,12 @@ if (!isset($_SESSION['user_id'])) {
 $db = getDB();
 $user_id = $_SESSION['user_id'];
 
+$logged_in = isset($_SESSION['user_id']);
+
+$open_modal = '';
+$modal_error = '';
+$modal_success = '';
+
 $items = [];
 $subtotal = 0;
 
@@ -170,7 +176,7 @@ if (count($items) === 0) {
     <a href="about.php">About</a>
     <?php if ($logged_in): ?>
       <a href="profile.php" class="btn-signed-in">
-        Hello<?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>!
+        Hello, <?= htmlspecialchars(explode(' ', $_SESSION['user_name'])[0]) ?>!
       </a>
       <a href="logout.php" class="btn-logout-nav">Logout</a>
     <?php else: ?>

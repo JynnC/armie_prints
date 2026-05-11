@@ -2,12 +2,9 @@
 require_once 'includes/db.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 $logged_in = isLoggedIn();
-<<<<<<< HEAD
-=======
 $modal_error   = '';
 $modal_success = '';
 $open_modal    = '';
->>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
 
 $id = (int)($_GET['id'] ?? 0);
 if (!$id) { header('Location: products.php'); exit; }
@@ -49,6 +46,7 @@ $cat_label = match($product['category']) {
     default         => 'Products',
 };
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
