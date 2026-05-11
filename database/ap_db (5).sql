@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 10, 2026 at 10:43 AM
+-- Generation Time: May 11, 2026 at 04:59 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -51,6 +51,36 @@ CREATE TABLE `custom_orders` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `custom_orders`
+--
+
+INSERT INTO `custom_orders` (`id`, `user_id`, `description`, `reference_image`, `quantity`, `status`, `created_at`) VALUES
+(1, 4, 'awdawdawdwdw', 'uploads/custom_orders/1778511270_icon-192.png', 1, 'pending', '2026-05-11 14:54:30');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `sender_role` enum('customer','admin') NOT NULL,
+  `message` text NOT NULL,
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`id`, `user_id`, `sender_role`, `message`, `is_read`, `created_at`) VALUES
+(1, 4, 'customer', 'hello', 1, '2026-05-11 11:15:43'),
+(2, 4, 'admin', 'hello! how can we help you?', 1, '2026-05-11 11:16:19');
+
 -- --------------------------------------------------------
 
 --
@@ -78,10 +108,14 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `user_id`, `total_amount`, `status`, `shipping_address`, `created_at`, `updated_at`, `payment_method`, `payment_status`, `released_at`, `courier`, `shipping_type`, `tracking_number`) VALUES
-(1, 4, 1192.00, 'shipped', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-07 14:39:36', '2026-05-10 08:36:35', 'Cash on Delivery', 'pending', NULL, NULL, NULL, NULL),
-(2, 4, 1341.00, 'shipped', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-07 15:19:37', '2026-05-10 08:36:35', 'Cash on Delivery', 'pending', NULL, NULL, NULL, NULL),
+(1, 4, 1192.00, 'shipped', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-07 14:39:36', '2026-05-11 11:02:35', 'Cash on Delivery', 'released', '2026-05-07 22:39:36', NULL, NULL, NULL),
+(2, 4, 1341.00, 'shipped', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-07 15:19:37', '2026-05-11 11:02:35', 'Cash on Delivery', 'released', '2026-05-07 23:19:37', NULL, NULL, NULL),
 (3, 4, 149.00, 'shipped', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-07 15:22:36', '2026-05-10 08:36:35', 'Cash on Delivery', 'released', '2026-05-07 23:22:36', NULL, NULL, NULL),
-(4, 4, 298.00, 'shipped', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-10 07:59:03', '2026-05-10 08:36:35', 'Cash on Delivery', 'pending', NULL, NULL, NULL, NULL);
+(4, 4, 298.00, 'shipped', 'Villegas Street, Baybayin Los Baños, Los Baños, 4030', '2026-05-10 07:59:03', '2026-05-11 11:02:35', 'Cash on Delivery', 'released', '2026-05-10 15:59:03', NULL, NULL, NULL),
+(5, 4, 79.00, 'pending', 'awbduiabwdawdawdawd, awdawdwadw, 1234', '2026-05-11 11:07:07', '2026-05-11 11:07:07', 'Cash on Delivery', 'pending', NULL, NULL, NULL, NULL),
+(6, 4, 790.00, 'pending', 'trying, adwdawd, 1234', '2026-05-11 11:23:43', '2026-05-11 11:23:43', 'Cash on Delivery', 'pending', NULL, NULL, NULL, NULL),
+(7, 4, 149.00, 'pending', 'awdawdaw, awdawdawd, 1234', '2026-05-11 11:25:50', '2026-05-11 11:25:50', 'Cash on Delivery', 'pending', NULL, NULL, NULL, NULL),
+(8, 4, 395.00, 'pending', 'awdawdaw, awdawdawd, 1234', '2026-05-11 11:31:10', '2026-05-11 11:31:10', 'Cash on Delivery', 'pending', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -114,7 +148,11 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `unit_pri
 (10, 2, 2, 1, 149.00),
 (11, 3, 2, 1, 149.00),
 (12, 4, 1, 1, 149.00),
-(13, 4, 2, 1, 149.00);
+(13, 4, 2, 1, 149.00),
+(14, 5, 7, 1, 79.00),
+(15, 6, 7, 10, 79.00),
+(16, 7, 1, 1, 149.00),
+(17, 8, 7, 5, 79.00);
 
 -- --------------------------------------------------------
 
@@ -192,6 +230,13 @@ ALTER TABLE `custom_orders`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `orders`
 --
 ALTER TABLE `orders`
@@ -227,25 +272,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `custom_orders`
 --
 ALTER TABLE `custom_orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -268,6 +319,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `custom_orders`
   ADD CONSTRAINT `custom_orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `messages`
+--
+ALTER TABLE `messages`
+  ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `orders`
