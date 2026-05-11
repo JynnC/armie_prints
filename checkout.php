@@ -7,6 +7,77 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// ── SUCCESS MODAL — exit early before any cart logic
+if (isset($_GET['success'])) { ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Placed - ArmiePrints</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background: #f4f6f9; }
+        .success-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .success-card {
+            background: #fff; border-radius: 20px;
+            padding: 48px 36px; max-width: 420px;
+            width: 90%; text-align: center;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.92) translateY(16px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .success-emoji { font-size: 60px; margin-bottom: 16px; }
+        .success-title {
+            font-family: 'Nunito', sans-serif;
+            font-size: 24px; font-weight: 900;
+            color: #1a1a1a; margin-bottom: 10px;
+        }
+        .success-sub { color: #777; font-size: 14px; line-height: 1.6; margin-bottom: 28px; }
+        .success-btn {
+            display: inline-block; background: #00B89C; color: #fff;
+            padding: 13px 32px; border-radius: 12px; text-decoration: none;
+            font-weight: 700; font-size: 14px; margin-bottom: 14px;
+            font-family: 'Poppins', sans-serif;
+            transition: background 0.2s;
+        }
+        .success-btn:hover { background: #009982; }
+        .success-back {
+            display: block; font-size: 13px;
+            color: #aaa; text-decoration: none; margin-top: 4px;
+        }
+        .success-back:hover { color: #777; }
+    </style>
+</head>
+<body>
+<div class="success-overlay">
+    <div class="success-card">
+        <div class="success-emoji">🎉</div>
+        <h2 class="success-title">Order Placed!</h2>
+        <p class="success-sub">
+            Thank you for your order!<br>
+            We'll process it right away and keep you updated.
+        </p>
+        <a href="tracking.php" class="success-btn">Track My Order →</a>
+        <a href="index.php" class="success-back">Back to Home</a>
+    </div>
+</div>
+<?php include 'chat-widget.php'; ?>
+</body>
+</html>
+<?php
+    exit;
+}
+
 $db = getDB();
 $user_id = $_SESSION['user_id'];
 
@@ -109,6 +180,27 @@ if (count($items) === 0) {
     <title>Checkout - ArmiePrints</title>
     <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="css/checkout.css">
+
+    <style>
+      #successModal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+      #successModal .modal-card {
+        max-width: 420px;
+        width: 90%;
+        text-align: center;
+        padding: 48px 36px;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      }
+    </style>
 </head>
 <body>
 
@@ -417,6 +509,26 @@ if (count($items) === 0) {
 </main>
 
 <script src="js/checkout.js"></script>
+
+
+<?php if (isset($_GET['success'])): ?>
+<div class="modal-overlay" id="successModal" style="display:flex;">
+  <div class="modal-card" style="max-width:420px;text-align:center;padding:48px 36px;">
+    <div style="font-size:56px;margin-bottom:16px;">🎉</div>
+    <h2 style="font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;margin-bottom:10px;">Order Placed!</h2>
+    <p style="color:#777;font-size:14px;margin-bottom:28px;">
+      Thank you for your order! We'll process it right away and keep you updated.
+    </p>
+    <a href="profile.php" class="mbtn-primary" style="display:inline-block;margin-bottom:12px;text-decoration:none;">
+      Track My Order →
+    </a>
+    <br>
+    <a href="index.php" style="font-size:13px;color:#aaa;">Back to Home</a>
+  </div>
+</div>
+<?php endif; ?>
+
+<?php include 'chat-widget.php'; ?>
 
 </body>
 </html>

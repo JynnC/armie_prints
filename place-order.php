@@ -130,5 +130,5 @@ if (!$is_buy_now) {
     $clear->execute();
 }
 
-header("Location: order-success.php?id=" . $order_id);
+header("Location: checkout.php?success=1");
 exit;

@@ -444,5 +444,6 @@ function getStatusStyle($status) {
 </footer>
 
 <script src="js/home.js"></script>
+<?php include 'chat-widget.php'; ?>
 </body>
 </html>

@@ -607,5 +607,6 @@ bindAjaxForm('form-edit',    'modal-edit');
 bindAjaxForm('form-restock', 'modal-restock');
 </script>
 
+<?php include 'chat-widget.php'; ?>
 </body>
 </html>

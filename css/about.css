@@ -263,16 +263,10 @@
 
 .team-grid {
   display: grid;
-<<<<<<< HEAD
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-top: 8px;
-=======
   grid-template-columns: repeat(auto-fit, minmax(260px, 300px));
   gap: 24px;
   margin-top: 8px;
   justify-content: center;
->>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
 }
 
 .team-card {

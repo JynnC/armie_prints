@@ -32,5 +32,6 @@ $order_id = intval($_GET['id'] ?? 0);
     </a>
 </div>
 
+<?php include 'chat-widget.php'; ?>
 </body>
 </html>

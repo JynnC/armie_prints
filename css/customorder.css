@@ -434,11 +434,8 @@ img { max-width: 100%; display: block; }
 
 /* Upload area */
 .drop{
-<<<<<<< HEAD
-=======
   display:block;
   width:100%;
->>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
   background:#dff6f2;
   border:1px dashed #b4e9df;
   border-radius:14px;
@@ -812,4 +809,13 @@ img { max-width: 100%; display: block; }
   .hero-title { font-size: 30px; }
   .filter-tabs { gap: 6px; }
   .tab { padding: 7px 14px; font-size: 12px; }
+}
+
+.drop.dragging {
+  border-color: #00B89C;
+  background: #e6faf7;
+  transform: scale(1.01);
+}
+.drop {
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
 }

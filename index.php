@@ -447,5 +447,6 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
 </footer>
 
 <script src="js/home.js"></script>
+<?php include 'chat-widget.php'; ?>
 </body>
 </html>

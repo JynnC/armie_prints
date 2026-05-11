@@ -349,5 +349,6 @@ $order_total = $orderData['order_total'];
 
 <script src="js/home.js"></script>
 
+<?php include 'chat-widget.php'; ?>
 </body>
 </html>

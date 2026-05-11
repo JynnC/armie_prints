@@ -646,5 +646,6 @@ if (selectAllOrders) {
 }
 </script>
 
+<?php include 'chat-widget.php'; ?>
 </body>
 </html>

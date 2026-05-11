@@ -287,20 +287,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <script src="js/home.js"></script>
 
 <script>
-const qty = document.getElementById('qty');
-const minus = document.getElementById('qtyMinus');
-const plus = document.getElementById('qtyPlus');
+const dropZone   = document.getElementById('dropZone');
+const fileInput  = document.getElementById('designFile');
 
-minus?.addEventListener('click', () => {
-  let value = parseInt(qty.value || 1);
-  if (value > 1) qty.value = value - 1;
+// ── Drag visual feedback
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZone.classList.add('dragging');
 });
 
-plus?.addEventListener('click', () => {
-  let value = parseInt(qty.value || 1);
-  qty.value = value + 1;
+dropZone.addEventListener('dragleave', () => {
+  dropZone.classList.remove('dragging');
 });
+
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('dragging');
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    fileInput.files = e.dataTransfer.files;
+    showPreview(file);
+  }
+});
+
+// ── File input change
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) showPreview(fileInput.files[0]);
+});
+
+// ── Preview
+function showPreview(file) {
+  const existing = document.getElementById('uploadPreview');
+  if (existing) existing.remove();
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const preview = document.createElement('div');
+    preview.id = 'uploadPreview';
+    preview.style.cssText = `
+      margin-top: 16px;
+      text-align: center;
+    `;
+    preview.innerHTML = `
+      <img src="${e.target.result}" alt="Preview"
+        style="max-width:100%;max-height:220px;border-radius:12px;
+               box-shadow:0 4px 16px rgba(0,0,0,0.1);object-fit:contain;">
+      <p style="margin-top:8px;font-size:12px;color:#777;font-family:'Poppins',sans-serif;">
+        📎 ${file.name}
+      </p>
+      <button type="button" id="removeFile"
+        style="margin-top:6px;font-size:12px;color:#E84040;background:none;
+               border:none;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;">
+        ✕ Remove
+      </button>
+    `;
+    dropZone.appendChild(preview);
+
+    document.getElementById('removeFile').addEventListener('click', () => {
+      fileInput.value = '';
+      preview.remove();
+      dropZone.querySelector('.big').style.display = '';
+      dropZone.querySelector('.small').style.display = '';
+    });
+
+    // hide the text prompts
+    dropZone.querySelector('.big').style.display = 'none';
+    dropZone.querySelector('.small').style.display = 'none';
+  };
+
+  reader.readAsDataURL(file);
+}
 </script>
 
+<?php include 'chat-widget.php'; ?>
 </body>
 </html>

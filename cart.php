@@ -276,5 +276,6 @@ $subtotal = 0;
 
 <script src="js/cart.js"></script>
 
+<?php include 'chat-widget.php'; ?>
 </body>
 </html>

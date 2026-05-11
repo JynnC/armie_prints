@@ -30,5 +30,6 @@ if (!isset($_SESSION['user_id'])) {
     </a>
 </div>
 
+<?php include 'chat-widget.php'; ?>
 </body>
 </html>

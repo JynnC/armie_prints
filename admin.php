@@ -368,5 +368,6 @@ include 'admin-nav.php';
 
 </div>
 
+<?php include 'chat-widget.php'; ?>
 </body>
 </html>
