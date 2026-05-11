@@ -434,6 +434,11 @@ img { max-width: 100%; display: block; }
 
 /* Upload area */
 .drop{
+<<<<<<< HEAD
+=======
+  display:block;
+  width:100%;
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
   background:#dff6f2;
   border:1px dashed #b4e9df;
   border-radius:14px;

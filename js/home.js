@@ -50,7 +50,13 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(res => res.json())
     .then(data => {
       if (data.status === 'login_required') {
+<<<<<<< HEAD
         showToast('Please login first.');
+=======
+        if (!promptAuthModal()) {
+          showToast('Please login first.');
+        }
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
         return;
       }
 
@@ -65,6 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   window.buyNow = function(productId) {
+<<<<<<< HEAD
+=======
+    if (promptAuthModal()) return;
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
 
     window.location.href =
       'checkout.php?buy_now=1&product_id=' + productId + '&qty=1';
@@ -137,6 +147,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = '';
   }
 
+<<<<<<< HEAD
+=======
+  function promptAuthModal() {
+    if (!modal) return false;
+    openModal('login');
+    showToast('Please sign in first.');
+    return true;
+  }
+
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
   openBtn?.addEventListener('click', () => openModal('login'));
   closeBtn?.addEventListener('click', closeModal);
   modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
@@ -155,6 +175,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // Auto-open if PHP returned an error
   if (document.querySelector('.modal-alert')) openModal();
 
+<<<<<<< HEAD
+=======
+  window.promptAuthModal = promptAuthModal;
+
+  // Require auth for selected navigation links (guest only).
+  document.addEventListener('click', (e) => {
+    const protectedNavLink = e.target.closest('a[href="customorder.php"], a[href="tracking.php"]');
+    if (!protectedNavLink) return;
+    if (!promptAuthModal()) return;
+    e.preventDefault();
+  });
+
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
   window.toggleMPw = function(inputId, icon) {
     const input = document.getElementById(inputId);
     if (!input) return;

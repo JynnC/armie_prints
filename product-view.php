@@ -2,6 +2,12 @@
 require_once 'includes/db.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 $logged_in = isLoggedIn();
+<<<<<<< HEAD
+=======
+$modal_error   = '';
+$modal_success = '';
+$open_modal    = '';
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
 
 $id = (int)($_GET['id'] ?? 0);
 if (!$id) { header('Location: products.php'); exit; }
@@ -459,7 +465,15 @@ window.addToCartPV = function(id) {
   .then(res => res.json())
   .then(data => {
     if (data.status === 'login_required') {
+<<<<<<< HEAD
       alert('Please login first.');
+=======
+      if (typeof window.promptAuthModal === 'function') {
+        window.promptAuthModal();
+      } else {
+        alert('Please login first.');
+      }
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
       return;
     }
 
@@ -476,6 +490,12 @@ window.addToCartPV = function(id) {
 };
 
 window.buyNowPV = function(id) {
+<<<<<<< HEAD
+=======
+  if (typeof window.promptAuthModal === 'function' && window.promptAuthModal()) {
+    return;
+  }
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
 
   const qty = parseInt(document.getElementById('qtyInput')?.value || 1);
 

@@ -2,11 +2,36 @@
 require_once 'includes/db.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 $logged_in = isLoggedIn();
+<<<<<<< HEAD
+=======
+$modal_error   = '';
+$modal_success = '';
+$open_modal    = '';
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
 
 // Filters
 $category = $_GET['category'] ?? 'all';
 $sort     = $_GET['sort'] ?? 'newest';
 $search   = trim($_GET['search'] ?? '');
+<<<<<<< HEAD
+=======
+$max_price = isset($_GET['max_price']) ? (float) $_GET['max_price'] : null;
+
+$db = getDB();
+$priceRangeRow = $db->query("
+    SELECT
+      COALESCE(MIN(price), 0) AS min_price,
+      COALESCE(MAX(price), 0) AS max_price
+    FROM products
+    WHERE is_active = 1
+")->fetch_assoc();
+
+$price_min = floor((float)($priceRangeRow['min_price'] ?? 0));
+$price_max = ceil((float)($priceRangeRow['max_price'] ?? 0));
+if ($price_max < 10) {
+    $price_max = 10;
+}
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
 
 // Build query
 $where = "WHERE is_active = 1";
@@ -24,6 +49,16 @@ if ($search !== '') {
     $params[] = "%$search%";
     $types   .= 'ss';
 }
+<<<<<<< HEAD
+=======
+if ($max_price !== null) {
+    if ($max_price < $price_min) $max_price = $price_min;
+    if ($max_price > $price_max) $max_price = $price_max;
+    $where .= " AND price <= ?";
+    $params[] = $max_price;
+    $types   .= 'd';
+}
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
 
 $order = match($sort) {
     'price_asc'  => 'ORDER BY price ASC',
@@ -32,7 +67,10 @@ $order = match($sort) {
     default      => 'ORDER BY created_at DESC',
 };
 
+<<<<<<< HEAD
 $db  = getDB();
+=======
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
 $sql = "SELECT * FROM products $where $order";
 
 if ($params) {
@@ -246,7 +284,11 @@ $counts['all'] = array_sum($counts);
           $active = $category === $val ? 'active' : '';
         ?>
         <li>
+<<<<<<< HEAD
           <a href="?category=<?= $val ?>&sort=<?= $sort ?>" class="cat-link <?= $active ?>">
+=======
+          <a href="?category=<?= $val ?>&sort=<?= urlencode($sort) ?>&search=<?= urlencode($search) ?>&max_price=<?= urlencode((string)($max_price ?? $price_max)) ?>" class="cat-link <?= $active ?>">
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
             <?= $label ?>
             <span class="cat-count"><?= $cnt ?></span>
           </a>
@@ -258,10 +300,17 @@ $counts['all'] = array_sum($counts);
     <div class="sidebar-block">
       <h3 class="sidebar-title">Price Range</h3>
       <div class="price-filter">
+<<<<<<< HEAD
         <input type="range" id="priceRange" min="0" max="500" value="500" step="10">
         <div class="price-labels">
           <span>₱0</span>
           <span id="priceVal">₱500</span>
+=======
+        <input type="range" id="priceRange" min="<?= $price_min ?>" max="<?= $price_max ?>" value="<?= $max_price ?? $price_max ?>" step="1">
+        <div class="price-labels">
+          <span>₱<?= number_format($price_min, 0) ?></span>
+          <span id="priceVal">₱<?= number_format($max_price ?? $price_max, 0) ?></span>
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
         </div>
       </div>
     </div>
@@ -280,12 +329,20 @@ $counts['all'] = array_sum($counts);
       <div class="prod-controls">
         <form method="GET" class="search-form">
           <input type="hidden" name="category" value="<?= htmlspecialchars($category) ?>">
+<<<<<<< HEAD
+=======
+          <input type="hidden" name="max_price" value="<?= htmlspecialchars((string)($max_price ?? $price_max)) ?>">
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
           <input type="text" name="search" placeholder="Search products..."
                  value="<?= htmlspecialchars($search) ?>">
           <button type="submit">🔍</button>
         </form>
 
+<<<<<<< HEAD
         <select class="sort-select" onchange="location='?category=<?= $category ?>&sort='+this.value+'&search=<?= urlencode($search) ?>'">
+=======
+        <select class="sort-select" onchange="location='?category=<?= urlencode($category) ?>&sort='+this.value+'&search=<?= urlencode($search) ?>&max_price=<?= urlencode((string)($max_price ?? $price_max)) ?>'">
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
           <option value="newest"     <?= $sort==='newest'     ?'selected':'' ?>>Newest</option>
           <option value="price_asc"  <?= $sort==='price_asc'  ?'selected':'' ?>>Price: Low to High</option>
           <option value="price_desc" <?= $sort==='price_desc' ?'selected':'' ?>>Price: High to Low</option>
@@ -386,7 +443,23 @@ $counts['all'] = array_sum($counts);
   // Price range filter
   const range = document.getElementById('priceRange');
   const val   = document.getElementById('priceVal');
+<<<<<<< HEAD
   if (range) range.addEventListener('input', () => val.textContent = '₱' + range.value);
+=======
+  if (range && val) {
+    range.addEventListener('input', () => {
+      val.textContent = '₱' + Number(range.value).toLocaleString();
+    });
+    range.addEventListener('change', () => {
+      const url = new URL(window.location.href);
+      url.searchParams.set('category', <?= json_encode($category) ?>);
+      url.searchParams.set('sort', <?= json_encode($sort) ?>);
+      url.searchParams.set('search', <?= json_encode($search) ?>);
+      url.searchParams.set('max_price', range.value);
+      window.location.href = url.toString();
+    });
+  }
+>>>>>>> 6590370dbfe86524f3080b27008e455e1968401b
 </script>
 </body>
 </html>
