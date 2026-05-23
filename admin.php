@@ -33,6 +33,7 @@ $released_income = $db->query("
     WHERE status IN ('shipped','delivered','completed')
 ")->fetch_assoc()['total'];
 
+<<<<<<< HEAD
 // Income details tab selection
 $income_tab = $_GET['income_tab'] ?? 'released';
 if (!in_array($income_tab, ['pending', 'released'], true)) {
@@ -92,6 +93,14 @@ $income_details = $db->query("
         o.released_at,
         full_name,
         user_phone
+=======
+// Recent income details
+$income_details = $db->query("
+    SELECT o.*, u.full_name
+    FROM orders o
+    LEFT JOIN users u ON o.user_id = u.id
+    WHERE o.status NOT IN ('cancelled')
+>>>>>>> daf6634f62d7b468a4474b8f1482a12e923157ca
     ORDER BY o.created_at DESC
     LIMIT 10
 ");
@@ -179,6 +188,18 @@ $income_month = $db->query("
 ")->fetch_assoc()['r'];
 
 
+<<<<<<< HEAD
+=======
+// ── RECENT ORDERS ─────────────────────────────
+$recent_orders = $db->query("
+    SELECT o.*, u.full_name
+    FROM orders o
+    LEFT JOIN users u ON o.user_id = u.id
+    ORDER BY o.created_at DESC
+    LIMIT 8
+");
+
+>>>>>>> daf6634f62d7b468a4474b8f1482a12e923157ca
 $page_title  = 'Dashboard';
 $active_page = 'dashboard';
 
@@ -334,6 +355,7 @@ include 'admin-nav.php';
         <div class="income-details-header">
             <h3>Income Details</h3>
 
+<<<<<<< HEAD
             <form class="search-box" method="get" action="<?= $base_url ?>">
                 <input type="text" name="search" placeholder="Search Order" value="<?= htmlspecialchars($search) ?>">
                 <input type="hidden" name="income_tab" value="<?= htmlspecialchars($income_tab) ?>">
@@ -347,12 +369,27 @@ include 'admin-nav.php';
         </div>
 
         <?php if ($income_details && $income_details->num_rows > 0): ?>
+=======
+            <div class="search-box">
+                <input type="text" placeholder="Search Order">
+                <span>🔍</span>
+            </div>
+        </div>
+
+        <div class="income-tabs">
+            <button>Pending</button>
+            <button class="active">Released</button>
+        </div>
+
+        <?php if ($recent_orders->num_rows > 0): ?>
+>>>>>>> daf6634f62d7b468a4474b8f1482a12e923157ca
 
             <table class="income-table">
                 <thead>
                     <tr>
                         <th>Order</th>
                         <th>Payment Released</th>
+<<<<<<< HEAD
                         <th>Payment Status</th>
                         <th>Payment Method</th>
                         <th>Released Amount</th>
@@ -360,6 +397,11 @@ include 'admin-nav.php';
                         <th>address</th>
                         <th>Customer Contact</th>
                         <th>Delivery Status</th>
+=======
+                        <th>Status</th>
+                        <th>Payment Method</th>
+                        <th>Released Amount</th>
+>>>>>>> daf6634f62d7b468a4474b8f1482a12e923157ca
                     </tr>
                 </thead>
 
@@ -371,7 +413,11 @@ include 'admin-nav.php';
                                 <div class="order-thumb">🧲</div>
                                 <div>
                                     <strong>#<?= $row['id'] ?></strong>
+<<<<<<< HEAD
                                     <p>Buyer: <?= htmlspecialchars($row['full_name']) ?></p>
+=======
+                                    <p>Buyer: <?= htmlspecialchars($row['full_name'] ?? 'Customer') ?></p>
+>>>>>>> daf6634f62d7b468a4474b8f1482a12e923157ca
                                 </div>
                             </div>
                         </td>
@@ -381,6 +427,7 @@ include 'admin-nav.php';
                         </td>
 
                         <td>
+<<<<<<< HEAD
                             <?= $row['payment_status'] === 'released' ? 'Released' : 'Pending' ?>
                         </td>
 
@@ -405,6 +452,26 @@ include 'admin-nav.php';
                                 default => ucfirst($row['status']),
                             }) ?>
                         </td>
+=======
+                            <?= $row['payment_status'] === 'released' ? 'Payment transferred successfully' : 'Payment pending' ?>
+                        </td>
+
+                        <td>
+                            <?= htmlspecialchars($row['payment_method'] ?? 'Cash on Delivery') ?>
+                        </td>
+
+                        <td>
+                            ₱<?= number_format($row['total_amount'], 2) ?>⌄
+                        </td>
+
+                        <td><?= date('m/d/Y', strtotime($row['created_at'])) ?></td>
+
+                        <td>Payment transferred successfully</td>
+
+                        <td>Cash on Delivery</td>
+
+                        <td>₱<?= number_format($row['total_amount'], 2) ?>⌄</td>
+>>>>>>> daf6634f62d7b468a4474b8f1482a12e923157ca
                     </tr>
                     <?php endwhile; ?>
                 </tbody>
