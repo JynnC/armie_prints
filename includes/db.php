@@ -10,7 +10,7 @@ function getDB() {
             'localhost',
             'root',
             '',
-            'ap_db'
+            'ap_db2'
         );
 
         if ($db->connect_error) {
