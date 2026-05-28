@@ -375,24 +375,42 @@ $counts['all'] = array_sum($counts);
   </main>
 </div>
 
-<!-- ══ FOOTER ═════════════════════════════════════════════════════ -->
+<!-- ══ FOOTER ══════════════════════════════════════════════════════ -->
 <footer class="footer">
   <div class="container footer-grid">
+
     <div class="footer-brand">
       <div class="footer-logo">ArmiePrints</div>
-      <p>Your favorite sticker-style ukay shop bringing cute and creativity to every magnet surface.</p>
+      <p>Your favorite sticker-style shop bringing cute and creativity to every magnet surface. Handcrafted with love.</p>
       <div class="footer-socials">
-        <a href="#">●</a><a href="#">●</a><a href="#">●</a><a href="#">●</a>
+        <a href="https://www.facebook.com/armieprints">
+            <img src="images/facebook.png" alt="Facebook" width="24">
+        </a>
+
+        <a href="https://www.tiktok.com/@armieprints">
+            <img src="images/tiktok.png" alt="TikTok" width="24">
+        </a>
       </div>
     </div>
-    <div class="footer-col"><h4>Shop</h4><ul>
-      <li><a href="#">New Arrivals</a></li><li><a href="#">Best Sellers</a></li>
-      <li><a href="#">Custom Orders</a></li><li><a href="#">Sale</a></li>
-    </ul></div>
-    <div class="footer-col"><h4>Help</h4><ul>
-      <li><a href="#">Track Order</a></li><li><a href="#">Shipping Info</a></li>
-      <li><a href="#">Returns</a></li><li><a href="#">FAQ</a></li>
-    </ul></div>
+
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="customorder.php">Custom Orders</a></li>
+        <li><a href="products.php">New Arrivals</a></li>
+        <li><a href="products.php">Best Sellers</a></li>
+        <li><a href="products.php">Sale</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Help</h4>
+      <ul>
+        <li><a href="tracking.php">Track Order</a></li>
+        <li><a href="https://www.facebook.com/armieprints">Contact Us</a></li>
+      </ul>
+    </div>
+
     <div class="footer-col footer-newsletter">
       <h4>Stay in the loop</h4>
       <p>Get notified with the latest items!</p>
@@ -401,7 +419,9 @@ $counts['all'] = array_sum($counts);
         <button type="button">→</button>
       </div>
     </div>
+
   </div>
+
   <div class="footer-bottom">
     <p>© <?= date('Y') ?> ArmiePrints. All rights reserved.</p>
   </div>

@@ -378,7 +378,7 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
       <div>
         <h3 class="feature-title">Custom Designs</h3>
         <p class="feature-desc">Got a unique idea? We turn your vision into a one-of-a-kind magnet set just for you.</p>
-        <a href="#" class="btn-feature">Start Creating</a>
+        <a href="customorder.php" class="btn-feature">Start Creating</a>
       </div>
     </div>
 
@@ -387,7 +387,7 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
       <div>
         <h3 class="feature-title">Business Solutions</h3>
         <p class="feature-desc">Bulk orders, brand merch, event giveaways — we've got your business covered.</p>
-        <a href="#" class="btn-feature btn-feature--alt">View Catalog</a>
+        <a href="about.php" class="btn-feature btn-feature--alt">View Catalog</a>
       </div>
     </div>
 
@@ -402,31 +402,31 @@ $trending = getDB()->query("SELECT * FROM products WHERE is_active = 1 ORDER BY 
       <div class="footer-logo">ArmiePrints</div>
       <p>Your favorite sticker-style shop bringing cute and creativity to every magnet surface. Handcrafted with love.</p>
       <div class="footer-socials">
-        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#"><i class="fa-brands fa-tiktok"></i></a>
-        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.facebook.com/armieprints">
+            <img src="images/facebook.png" alt="Facebook" width="24">
+        </a>
+
+        <a href="https://www.tiktok.com/@armieprints">
+            <img src="images/tiktok.png" alt="TikTok" width="24">
+        </a>
       </div>
     </div>
 
     <div class="footer-col">
       <h4>Shop</h4>
       <ul>
-        <li><a href="#">New Arrivals</a></li>
-        <li><a href="#">Best Sellers</a></li>
-        <li><a href="#">Custom Orders</a></li>
-        <li><a href="#">Sale</a></li>
+        <li><a href="customorder.php">Custom Orders</a></li>
+        <li><a href="products.php">New Arrivals</a></li>
+        <li><a href="products.php">Best Sellers</a></li>
+        <li><a href="products.php">Sale</a></li>
       </ul>
     </div>
 
     <div class="footer-col">
       <h4>Help</h4>
       <ul>
-        <li><a href="#">Track Order</a></li>
-        <li><a href="#">Shipping Info</a></li>
-        <li><a href="#">Returns</a></li>
-        <li><a href="#">FAQ</a></li>
-        <li><a href="#">Contact Us</a></li>
+        <li><a href="tracking.php">Track Order</a></li>
+        <li><a href="https://www.facebook.com/armieprints">Contact Us</a></li>
       </ul>
     </div>
 

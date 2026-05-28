@@ -330,29 +330,39 @@ $modal_success = $modal_success ?? '';
 <!-- ══ FOOTER ══════════════════════════════════════════════════════ -->
 <footer class="footer">
   <div class="container footer-grid">
+
     <div class="footer-brand">
       <div class="footer-logo">ArmiePrints</div>
       <p>Your favorite sticker-style shop bringing cute and creativity to every magnet surface. Handcrafted with love.</p>
       <div class="footer-socials">
-        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-        <a href="#"><i class="fa-brands fa-instagram"></i></a>
-        <a href="#"><i class="fa-brands fa-tiktok"></i></a>
-        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.facebook.com/armieprints">
+            <img src="images/facebook.png" alt="Facebook" width="24">
+        </a>
+
+        <a href="https://www.tiktok.com/@armieprints">
+            <img src="images/tiktok.png" alt="TikTok" width="24">
+        </a>
       </div>
     </div>
-    <div class="footer-col"><h4>Shop</h4><ul>
-      <li><a href="#">New Arrivals</a></li>
-      <li><a href="#">Best Sellers</a></li>
-      <li><a href="products.php">All Products</a></li>
-      <li><a href="#">Sale</a></li>
-    </ul></div>
-    <div class="footer-col"><h4>Help</h4><ul>
-      <li><a href="#">Track Order</a></li>
-      <li><a href="#">Shipping Info</a></li>
-      <li><a href="#">Returns</a></li>
-      <li><a href="#">FAQ</a></li>
-      <li><a href="#">Contact Us</a></li>
-    </ul></div>
+
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="customorder.php">Custom Orders</a></li>
+        <li><a href="products.php">New Arrivals</a></li>
+        <li><a href="products.php">Best Sellers</a></li>
+        <li><a href="products.php">Sale</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Help</h4>
+      <ul>
+        <li><a href="tracking.php">Track Order</a></li>
+        <li><a href="https://www.facebook.com/armieprints">Contact Us</a></li>
+      </ul>
+    </div>
+
     <div class="footer-col footer-newsletter">
       <h4>Stay in the loop</h4>
       <p>Get notified with the latest items!</p>
@@ -361,7 +371,9 @@ $modal_success = $modal_success ?? '';
         <button type="button">→</button>
       </div>
     </div>
+
   </div>
+
   <div class="footer-bottom">
     <p>© <?= date('Y') ?> ArmiePrints. All rights reserved.</p>
   </div>
